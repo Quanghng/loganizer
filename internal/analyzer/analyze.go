@@ -56,7 +56,6 @@ func ConvertToReportEntry(res AnalyzeResult) ReportEntry {
 		file_path:    res.InputTarget.Path,
 		status:  res.status,
 		message: "Analyse terminée avec succès.",
-		error_details: res.Err.Error(),
 	}
 
 	if res.Err != nil {
