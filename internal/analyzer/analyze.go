@@ -20,11 +20,11 @@ StatusFailed Status = "FAILED"
 )
 
 type ReportEntry struct {
-	log_id        string
-	file_path     string
-	status        string
-	message       string // "OK", "Inaccessible", "Error"
-	error_details string // Message d'erreur, omis si vide
+    LogID        string `json:"log_id"`
+    FilePath     string `json:"file_path"`
+    Status       string `json:"status"`
+    Message      string `json:"message"`
+    ErrorDetails string `json:"error_details,omitempty"`
 }
 
 type AnalyzeResult struct {
@@ -52,26 +52,28 @@ func AnalyzeLogSync (target config.InputTarget) AnalyzeResult {
 
 func ConvertToReportEntry(res AnalyzeResult) ReportEntry {
 	report := ReportEntry{
-		log_id:   res.InputTarget.Id,
-		file_path:    res.InputTarget.Path,
-		status:  res.status,
-		message: "Analyse terminée avec succès.",
+    LogID:        res.InputTarget.Id,
+    FilePath:     res.InputTarget.Path,
+    Status:       res.status, // assuming Status is exported
+    Message:      "Analyse terminée avec succès.",
 	}
+
 
 	if res.Err != nil {
 		var inaccessible *InaccessibleFileError
 		var parsing *ParsingError
 		if errors.As(res.Err, &inaccessible) {
-			report.status = "FAILED"
-			report.message = "Fichier introuvable."
-			report.error_details = fmt.Sprintf("Inaccessible: %v", inaccessible.Err)
+			report.Status = "FAILED"
+			report.Message = "Fichier introuvable."
+			report.ErrorDetails = fmt.Sprintf("Inaccessible: %v", inaccessible.Err)
 		} else if errors.As(res.Err, &parsing) {
-			report.status = "FAILED"
-			report.message = "Parsing error."
-			report.error_details = fmt.Sprintf("Parsing error: %v", parsing.Err)
+			report.Status = "FAILED"
+			report.Message = "Parsing error."
+			report.ErrorDetails = fmt.Sprintf("Parsing error: %v", parsing.Err)
 		} else {
-			report.status = "FAILED"
-			report.error_details = fmt.Sprintf("Erreur générique: %v", res.Err)
+			report.Status = "FAILED"
+			report.Message = "Generic error."
+			report.ErrorDetails = fmt.Sprintf("Generic error: %v", res.Err)
 		}
 	}
 	
