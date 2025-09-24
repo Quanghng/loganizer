@@ -9,8 +9,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use: "loganizer",
-	Short: "TODO",
-	Long: `TODO`,
+	Short: "Outil d'analyse de logs avec des règles personnalisées",
+	Long: `loganizer est un outil en ligne de commande pour analyser des fichiers de logs`,
 }
 
 func Execute() {

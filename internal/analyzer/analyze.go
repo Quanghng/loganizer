@@ -34,19 +34,32 @@ type AnalyzeResult struct {
 }
 
 func AnalyzeLogSync (target config.InputTarget) AnalyzeResult {
-	ms := rand.Intn(151) + 50                     // random int between 50 and 200 inclusive
+	ms := rand.Intn(151) + 50                   
 	d := time.Duration(ms) * time.Millisecond
 	time.Sleep(d)
 
+	// Verifier si le fichier existe
 	if _, err := os.Stat(target.Path); err != nil {
 		if os.IsNotExist(err) {
-			return AnalyzeResult{}
+			return AnalyzeResult{
+				InputTarget: target,
+				status:      string(StatusFailed),
+				Err:         &InaccessibleFileError{Err: err},
+			}
+		}
+		// Autre erreur lors de l'accès au fichier
+		return AnalyzeResult{
+			InputTarget: target,
+			status:      string(StatusFailed),
+			Err:         &InaccessibleFileError{Err: err},
 		}
 	}
 	
+	// Success
 	return AnalyzeResult{
 		InputTarget: target,
-		status: "OK",
+		status:      string(StatusOK),
+		Err:         nil,
 	}
 }
 
@@ -54,7 +67,7 @@ func ConvertToReportEntry(res AnalyzeResult) ReportEntry {
 	report := ReportEntry{
     LogID:        res.InputTarget.Id,
     FilePath:     res.InputTarget.Path,
-    Status:       res.status, // assuming Status is exported
+    Status:       res.status,
     Message:      "Analyse terminée avec succès.",
 	}
 

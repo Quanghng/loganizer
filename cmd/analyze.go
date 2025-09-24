@@ -69,7 +69,7 @@ var analyzeCmd = &cobra.Command {
 					fmt.Printf("❌ %s (%s) : erreur - %v\n", res.InputTarget.Id, res.InputTarget.Path, res.Err)
 				}
 			} else {
-				fmt.Printf("✅ %s (%s) : OK - %s\n", res.InputTarget.Id, res.InputTarget.Path, res.Err)
+				fmt.Printf("✅ %s (path: %s) : OK\n", res.InputTarget.Id, res.InputTarget.Path)
 			}
 		}
 
